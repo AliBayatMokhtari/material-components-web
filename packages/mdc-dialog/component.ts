@@ -192,6 +192,22 @@ export class MDCDialog extends MDCComponent<MDCDialogFoundation> {
         });
       },
       trapFocus: () => this.focusTrap_.trapFocus(),
+      registerContentEventHandler: (evt, handler) => {
+        if (this.content_ instanceof HTMLElement) {
+          this.content_.addEventListener(evt, handler);
+        }
+      },
+      deregisterContentEventHandler: (evt, handler) => {
+        if (this.content_ instanceof HTMLElement) {
+          this.content_.removeEventListener(evt, handler);
+        }
+      },
+      isScrollableContentAtTop: () => {
+        return util.isScrollAtTop(this.content_);
+      },
+      isScrollableContentAtBottom: () => {
+        return util.isScrollAtBottom(this.content_);
+      },
     };
     return new MDCDialogFoundation(adapter);
   }

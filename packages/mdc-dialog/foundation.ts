@@ -21,9 +21,16 @@
  * THE SOFTWARE.
  */
 
+import {AnimationFrame} from '@material/animation/animationframe';
 import {MDCFoundation} from '@material/base/foundation';
+import {SpecificEventListener} from '@material/base/types';
+
 import {MDCDialogAdapter} from './adapter';
 import {cssClasses, numbers, strings} from './constants';
+
+enum AnimationKeys {
+  POLL_SCROLL_POS = 'poll_scroll_position'
+}
 
 export class MDCDialogFoundation extends MDCFoundation<MDCDialogAdapter> {
   static get cssClasses() {
@@ -58,10 +65,15 @@ export class MDCDialogFoundation extends MDCFoundation<MDCDialogAdapter> {
       removeClass: () => undefined,
       reverseButtons: () => undefined,
       trapFocus: () => undefined,
+      registerContentEventHandler: () => undefined,
+      deregisterContentEventHandler: () => undefined,
+      isScrollableContentAtTop: () => false,
+      isScrollableContentAtBottom: () => false,
     };
   }
 
   private isOpen_ = false;
+  private isFullscreen_ = false;
   private animationFrame_ = 0;
   private animationTimer_ = 0;
   private layoutFrame_ = 0;
@@ -70,15 +82,23 @@ export class MDCDialogFoundation extends MDCFoundation<MDCDialogAdapter> {
   private autoStackButtons_ = true;
   private areButtonsStacked_ = false;
   private suppressDefaultPressSelector = strings.SUPPRESS_DEFAULT_PRESS_SELECTOR;
+  private readonly windowScrollHandler: SpecificEventListener<'scroll'>;
+  private readonly animFrame: AnimationFrame;
 
   constructor(adapter?: Partial<MDCDialogAdapter>) {
     super({...MDCDialogFoundation.defaultAdapter, ...adapter});
+
+    this.animFrame = new AnimationFrame();
+    this.windowScrollHandler = () => {
+      this.handleScrollEvent();
+    };
   }
 
   init() {
     if (this.adapter.hasClass(cssClasses.STACKED)) {
       this.setAutoStackButtons(false);
     }
+    this.isFullscreen_ = this.adapter.hasClass(cssClasses.FULLSCREEN);
   }
 
   destroy() {
@@ -95,12 +115,21 @@ export class MDCDialogFoundation extends MDCFoundation<MDCDialogAdapter> {
       cancelAnimationFrame(this.layoutFrame_);
       this.layoutFrame_ = 0;
     }
+
+    if (this.isFullscreen_ && this.adapter.isContentScrollable()) {
+      this.adapter.deregisterContentEventHandler(
+          'scroll', this.windowScrollHandler);
+    }
   }
 
   open() {
     this.isOpen_ = true;
     this.adapter.notifyOpening();
     this.adapter.addClass(cssClasses.OPENING);
+    if (this.isFullscreen_ && this.adapter.isContentScrollable()) {
+      this.adapter.registerContentEventHandler(
+          'scroll', this.windowScrollHandler);
+    }
 
     // Wait a frame once display is no longer "none", to establish basis for animation
     this.runNextAnimationFrame_(() => {
@@ -128,6 +157,10 @@ export class MDCDialogFoundation extends MDCFoundation<MDCDialogAdapter> {
     this.adapter.addClass(cssClasses.CLOSING);
     this.adapter.removeClass(cssClasses.OPEN);
     this.adapter.removeBodyClass(cssClasses.SCROLL_LOCK);
+    if (this.isFullscreen_ && this.adapter.isContentScrollable()) {
+      this.adapter.deregisterContentEventHandler(
+          'scroll', this.windowScrollHandler);
+    }
 
     cancelAnimationFrame(this.animationFrame_);
     this.animationFrame_ = 0;
@@ -243,11 +276,31 @@ export class MDCDialogFoundation extends MDCFoundation<MDCDialogAdapter> {
     }
   }
 
+  /**
+   * Handles scroll event on the dialog's content element -- showing a scroll
+   * divider on the header or footer based on the scroll position. This handler
+   * should only be registered on full-screen dialogs with scrollable content.
+   */
+  private handleScrollEvent() {
+    // Since scroll events can fire at a high rate, we throttle these events by
+    // using requestAnimationFrame.
+    this.animFrame.request(AnimationKeys.POLL_SCROLL_POS, () => {
+      this.showScrollDividerHeader();
+      this.showScrollDividerFooter();
+    });
+  }
+
   private layoutInternal_() {
     if (this.autoStackButtons_) {
       this.detectStackedButtons_();
     }
     this.detectScrollableContent_();
+    if (this.adapter.isContentScrollable() && this.isFullscreen_) {
+      // If dialog is full-screen and scrollable, check if a scroll divider
+      // should be shown.
+      this.showScrollDividerHeader();
+      this.showScrollDividerFooter();
+    }
   }
 
   private handleAnimationTimerEnd_() {
@@ -289,6 +342,22 @@ export class MDCDialogFoundation extends MDCFoundation<MDCDialogAdapter> {
     this.adapter.removeClass(cssClasses.SCROLLABLE);
     if (this.adapter.isContentScrollable()) {
       this.adapter.addClass(cssClasses.SCROLLABLE);
+    }
+  }
+
+  private showScrollDividerHeader() {
+    if (!this.adapter.isScrollableContentAtTop()) {
+      this.adapter.addClass(cssClasses.SCROLL_DIVIDER_HEADER);
+    } else if (this.adapter.hasClass(cssClasses.SCROLL_DIVIDER_HEADER)) {
+      this.adapter.removeClass(cssClasses.SCROLL_DIVIDER_HEADER);
+    }
+  }
+
+  private showScrollDividerFooter() {
+    if (!this.adapter.isScrollableContentAtBottom()) {
+      this.adapter.addClass(cssClasses.SCROLL_DIVIDER_FOOTER);
+    } else if (this.adapter.hasClass(cssClasses.SCROLL_DIVIDER_FOOTER)) {
+      this.adapter.removeClass(cssClasses.SCROLL_DIVIDER_FOOTER);
     }
   }
 }

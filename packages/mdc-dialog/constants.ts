@@ -28,6 +28,9 @@ export const cssClasses = {
   SCROLLABLE: 'mdc-dialog--scrollable',
   SCROLL_LOCK: 'mdc-dialog-scroll-lock',
   STACKED: 'mdc-dialog--stacked',
+  FULLSCREEN: 'mdc-dialog--fullscreen',
+  SCROLL_DIVIDER_HEADER: 'mdc-dialog-scroll-divider-header',
+  SCROLL_DIVIDER_FOOTER: 'mdc-dialog-scroll-divider-footer',
 };
 
 export const strings = {

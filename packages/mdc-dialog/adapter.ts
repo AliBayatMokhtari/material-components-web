@@ -21,6 +21,8 @@
  * THE SOFTWARE.
  */
 
+import {EventType, SpecificEventListener} from '@material/base/types';
+
 /**
  * Defines the shape of the adapter expected by the foundation.
  * Implement this adapter for your framework of choice to delegate updates to
@@ -51,4 +53,11 @@ export interface MDCDialogAdapter {
   notifyOpened(): void;
   notifyClosing(action: string): void;
   notifyClosed(action: string): void;
+
+  registerContentEventHandler<K extends EventType>(
+      evtType: K, handler: SpecificEventListener<K>): void;
+  deregisterContentEventHandler<K extends EventType>(
+      evtType: K, handler: SpecificEventListener<K>): void;
+  isScrollableContentAtTop(): boolean;
+  isScrollableContentAtBottom(): boolean;
 }
