@@ -1,7 +1,7 @@
 {
   "name": "@material/linear-progress",
   "description": "The Material Components for the web linear progress indicator component",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "license": "MIT",
   "main": "dist/mdc.linearProgress.js",
   "module": "index.js",
@@ -18,12 +18,12 @@
     "directory": "packages/mdc-linear-progress"
   },
   "dependencies": {
-    "@material/animation": "^9.0.0",
-    "@material/base": "^9.0.0",
-    "@material/feature-targeting": "^9.0.0",
-    "@material/progress-indicator": "^9.0.0",
-    "@material/rtl": "^9.0.0",
-    "@material/theme": "^9.0.0",
+    "@material/animation": "^9.1.0",
+    "@material/base": "^9.1.0",
+    "@material/feature-targeting": "^9.1.0",
+    "@material/progress-indicator": "^9.1.0",
+    "@material/rtl": "^9.1.0",
+    "@material/theme": "^9.1.0",
     "tslib": "^1.9.3"
   },
   "devDependencies": {

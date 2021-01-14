@@ -1,7 +1,7 @@
 {
   "name": "@material/notched-outline",
   "description": "The Material Components for the web notched-outline component",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "license": "MIT",
   "keywords": [
     "material components",
@@ -22,12 +22,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@material/base": "^9.0.0",
-    "@material/feature-targeting": "^9.0.0",
-    "@material/floating-label": "^9.0.0",
-    "@material/rtl": "^9.0.0",
-    "@material/shape": "^9.0.0",
-    "@material/theme": "^9.0.0",
+    "@material/base": "^9.1.0",
+    "@material/feature-targeting": "^9.1.0",
+    "@material/floating-label": "^9.1.0",
+    "@material/rtl": "^9.1.0",
+    "@material/shape": "^9.1.0",
+    "@material/theme": "^9.1.0",
     "tslib": "^1.9.3"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@material/menu-surface",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "description": "The Material Components for the web menu surface component",
   "license": "MIT",
   "keywords": [
@@ -18,13 +18,13 @@
     "directory": "packages/mdc-menu-surface"
   },
   "dependencies": {
-    "@material/animation": "^9.0.0",
-    "@material/base": "^9.0.0",
-    "@material/elevation": "^9.0.0",
-    "@material/feature-targeting": "^9.0.0",
-    "@material/rtl": "^9.0.0",
-    "@material/shape": "^9.0.0",
-    "@material/theme": "^9.0.0",
+    "@material/animation": "^9.1.0",
+    "@material/base": "^9.1.0",
+    "@material/elevation": "^9.1.0",
+    "@material/feature-targeting": "^9.1.0",
+    "@material/rtl": "^9.1.0",
+    "@material/shape": "^9.1.0",
+    "@material/theme": "^9.1.0",
     "tslib": "^1.9.3"
   },
   "publishConfig": {

@@ -1,7 +1,7 @@
 {
   "name": "@material/select",
   "description": "The Material Components web select (text field drop-down) component",
-  "version": "9.0.0",
+  "version": "9.1.0",
   "license": "MIT",
   "keywords": [
     "material components",
@@ -19,22 +19,22 @@
     "directory": "packages/mdc-select"
   },
   "dependencies": {
-    "@material/animation": "^9.0.0",
-    "@material/base": "^9.0.0",
-    "@material/density": "^9.0.0",
-    "@material/dom": "^9.0.0",
-    "@material/feature-targeting": "^9.0.0",
-    "@material/floating-label": "^9.0.0",
-    "@material/line-ripple": "^9.0.0",
-    "@material/list": "^9.0.0",
-    "@material/menu": "^9.0.0",
-    "@material/menu-surface": "^9.0.0",
-    "@material/notched-outline": "^9.0.0",
-    "@material/ripple": "^9.0.0",
-    "@material/rtl": "^9.0.0",
-    "@material/shape": "^9.0.0",
-    "@material/theme": "^9.0.0",
-    "@material/typography": "^9.0.0",
+    "@material/animation": "^9.1.0",
+    "@material/base": "^9.1.0",
+    "@material/density": "^9.1.0",
+    "@material/dom": "^9.1.0",
+    "@material/feature-targeting": "^9.1.0",
+    "@material/floating-label": "^9.1.0",
+    "@material/line-ripple": "^9.1.0",
+    "@material/list": "^9.1.0",
+    "@material/menu": "^9.1.0",
+    "@material/menu-surface": "^9.1.0",
+    "@material/notched-outline": "^9.1.0",
+    "@material/ripple": "^9.1.0",
+    "@material/rtl": "^9.1.0",
+    "@material/shape": "^9.1.0",
+    "@material/theme": "^9.1.0",
+    "@material/typography": "^9.1.0",
     "tslib": "^1.9.3"
   }
 }
