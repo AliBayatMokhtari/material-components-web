@@ -52,11 +52,14 @@ export class MDCTooltipFoundation extends MDCFoundation<MDCTooltipAdapter> {
       addClass: () => undefined,
       hasClass: () => false,
       removeClass: () => undefined,
+      getStyleProperty: () => '',
       setStyleProperty: () => undefined,
       getViewportWidth: () => 0,
       getViewportHeight: () => 0,
       getTooltipSize: () => ({width: 0, height: 0}),
       getAnchorBoundingRect: () =>
+          ({top: 0, right: 0, bottom: 0, left: 0, width: 0, height: 0}),
+      getParentBoundingRect: () =>
           ({top: 0, right: 0, bottom: 0, left: 0, width: 0, height: 0}),
       getAnchorAttribute: () => null,
       setAnchorAttribute: () => null,
@@ -88,6 +91,7 @@ export class MDCTooltipFoundation extends MDCFoundation<MDCTooltipAdapter> {
   private readonly showDelayMs = numbers.SHOW_DELAY_MS;
 
   private anchorRect: ClientRect|null = null;
+  private parentRect: ClientRect|null = null;
   private frameId: number|null = null;
   private hideTimeout: number|null = null;
   private showTimeout: number|null = null;
@@ -325,6 +329,7 @@ export class MDCTooltipFoundation extends MDCFoundation<MDCTooltipAdapter> {
       this.adapter.addClass(MULTILINE_TOOLTIP);
     }
     this.anchorRect = this.adapter.getAnchorBoundingRect();
+    this.parentRect = this.adapter.getParentBoundingRect();
     this.positionTooltip();
 
     this.adapter.registerDocumentEventHandler(
@@ -438,9 +443,24 @@ export class MDCTooltipFoundation extends MDCFoundation<MDCTooltipAdapter> {
   }
 
   private positionTooltip() {
+    // getStyleProperty is used instead of getTooltipSize since getTooltipSize
+    // returns the offSetWidth, which includes the border and padding. What we
+    // need is the width of the tooltip without border and padding.
+    const width = this.adapter.getStyleProperty('width');
     const {top, left} = this.calculateTooltipDistance(this.anchorRect);
-    this.adapter.setStyleProperty('top', `${top}px`);
-    this.adapter.setStyleProperty('left', `${left}px`);
+    // Tooltip distances are calculated with respect to the viewport, but since
+    // rich tooltips are positioned based on the parent element, their values
+    // need to be adjusted against the parent element.
+    const leftAdjustment =
+        this.richTooltip ? left - (this.parentRect?.left ?? 0) : left;
+    const topAdjustment =
+        this.richTooltip ? top - (this.parentRect?.top ?? 0) : top;
+    this.adapter.setStyleProperty('top', `${topAdjustment}px`);
+    this.adapter.setStyleProperty('left', `${leftAdjustment}px`);
+    // When we move rich tooltips into their parent containers, the tooltip
+    // might shrink, and so we set the width of the tooltip back to the original
+    // width.
+    this.adapter.setStyleProperty('width', width);
   }
 
   /**
@@ -497,7 +517,9 @@ export class MDCTooltipFoundation extends MDCFoundation<MDCTooltipAdapter> {
     }
     if (this.xTooltipPos === XPosition.CENTER &&
         positionOptions.has(centerPos)) {
-      return centerPos;
+      // positionOptions only has centerPos for plain tooltips, and centerPos
+      // is defined for plain tooltips.
+      return centerPos!;
     }
 
     // If no user position is supplied, rich tooltips default to end pos, then
@@ -655,6 +677,7 @@ export class MDCTooltipFoundation extends MDCFoundation<MDCTooltipAdapter> {
         newAnchorRect.height !== this.anchorRect.height ||
         newAnchorRect.width !== this.anchorRect.width) {
       this.anchorRect = newAnchorRect;
+      this.parentRect = this.adapter.getParentBoundingRect();
       this.positionTooltip();
     }
   }
